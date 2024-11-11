@@ -16,6 +16,6 @@ public class UserController {
 
     @PostMapping("join")
     public void signup(){
-        userService.signup(userName,password);
+        userService.signup();
     }
 }

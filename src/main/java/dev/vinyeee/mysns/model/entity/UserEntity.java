@@ -1,5 +1,8 @@
 package dev.vinyeee.mysns.model.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -7,6 +10,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table
+@Getter
+@Setter
 public class UserEntity {
 
     @Id
@@ -14,4 +19,7 @@ public class UserEntity {
 
     @Column(name = "user_name")
     private String userName;
+
+
+    private String password;
 }

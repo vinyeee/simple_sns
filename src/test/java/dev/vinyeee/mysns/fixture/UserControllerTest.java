@@ -1,4 +1,4 @@
-package dev.vinyeee.mysns.controller;
+package dev.vinyeee.mysns.fixture;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
