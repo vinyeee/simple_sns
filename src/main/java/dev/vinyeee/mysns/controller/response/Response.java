@@ -1,8 +1,10 @@
 package dev.vinyeee.mysns.controller.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 // 각 요청마다 다른 response 형식이 반환되어 프론트 쪽에 parsing 하기 힘든 점을 고려 response 를 통일해준다
+@Getter
 @AllArgsConstructor
 public class Response<T> {
 

@@ -4,9 +4,11 @@ import dev.vinyeee.mysns.controller.request.UserJoinRequest;
 import dev.vinyeee.mysns.model.User;
 import dev.vinyeee.mysns.model.entity.UserRole;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 
 @AllArgsConstructor
+@Getter
 public class UserJoinResponse {
 
     private Integer id;

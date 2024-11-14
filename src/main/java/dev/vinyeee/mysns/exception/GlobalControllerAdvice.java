@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalControllerAdvice {
 
     // SnsApplicationException이 발생하면 이 메서드가 호출된다.
-    @ExceptionHandler(SnsApplicationException.class)  // SnsApplicationException 예외가 발생했을 때 처리할 메서드 지정.
+    @ExceptionHandler(SnsApplicationException.class)
     public ResponseEntity<?> applicationHandler(SnsApplicationException e){
 
         // 예외 발생 시 해당 예외에 대한 정보와 함께 로그를 남긴다.

@@ -6,10 +6,8 @@ import dev.vinyeee.mysns.model.User;
 import dev.vinyeee.mysns.model.entity.UserEntity;
 import dev.vinyeee.mysns.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
-import org.assertj.core.internal.bytebuddy.dynamic.DynamicType;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +27,13 @@ public class UserService {
         });
 
         // 유저 등록 x => 회원가입 진행
-        //userEntityRepository.save(new UserEntity());
+
+//        UserEntity userEntity = new UserEntity();
+//        userEntity.setUserName(userName);
+//        userEntity.setPassword(password);
+        //userEntityRepository.save(userEntity);
         UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName, password));
-        //userEntityRepository.save();
+
 
         return User.fromEntity(userEntity);
 
