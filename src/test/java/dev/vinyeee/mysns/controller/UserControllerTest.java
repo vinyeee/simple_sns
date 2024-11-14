@@ -4,6 +4,7 @@ package dev.vinyeee.mysns.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.vinyeee.mysns.controller.request.UserJoinRequest;
 import dev.vinyeee.mysns.controller.request.UserLoginRequest;
+import dev.vinyeee.mysns.exception.ErrorCode;
 import dev.vinyeee.mysns.model.User;
 import dev.vinyeee.mysns.exception.SnsApplicationException;
 import dev.vinyeee.mysns.service.UserService;
@@ -62,7 +63,7 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
-        when(userservice.signup(userName,password)).thenThrow(new SnsApplicationException());
+        when(userservice.signup(userName,password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME,""));
 
 
         mockMvc.perform(post("/api/v1/users/join")
@@ -95,7 +96,7 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
-        when(userservice.login(userName,password)).thenThrow(new SnsApplicationException());
+        when(userservice.login(userName,password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME,""));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +112,7 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
-        when(userservice.login(userName, password)).thenThrow(new SnsApplicationException());
+        when(userservice.login(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME,""));
 
 
         mockMvc.perform(post("/api/v1/users/login")
