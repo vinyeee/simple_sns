@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +19,7 @@ public class UserService {
     private final UserEntityRepository userEntityRepository;
     private final BCryptPasswordEncoder encoder;
 
-    // TODO : implement
+    @Transactional // 회원가입 중 exception 이 발생하게 되면 entity 를 save 하는 부분이 롤백
     public User signup(String userName, String password){
         // 회원가입하려는 userName 으로 회원가입된 user 가 있는지
         // 유저 등록 o => 예외
@@ -37,7 +39,6 @@ public class UserService {
 
 
         UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName, encoder.encode(password)));
-
 
         return User.fromEntity(userEntity);
 
