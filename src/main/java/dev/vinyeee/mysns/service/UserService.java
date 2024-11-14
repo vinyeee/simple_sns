@@ -18,17 +18,21 @@ public class UserService {
 
     // TODO : implement
     public User signup(String userName, String password){
-        // 회원가입하려는 userName 으로 회원 가입된 user 가 있는지
-        Optional<UserEntity> userEntity = userEntityRepository.findByUserName(userName);
-
-        // 유저 등록 x => 회원가입 진행
-        userEntityRepository.save(new UserEntity());
-
-        //userEntityRepository.save();
+        // 회원가입하려는 userName 으로 회원가입된 user 가 있는지
         // 유저 등록 o => 예외
 
+        //Optional<UserEntity> userEntity = userEntityRepository.findByUserName(userName);
 
-        return new User();
+        userEntityRepository.findByUserName(userName).ifPresent(it -> {
+            throw new SnsApplicationException();
+        });
+
+        // 유저 등록 x => 회원가입 진행
+        //userEntityRepository.save(new UserEntity());
+        UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName, password));
+        //userEntityRepository.save();
+
+        return User.fromEntity(userEntity);
 
     }
 
