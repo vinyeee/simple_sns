@@ -6,6 +6,7 @@ import dev.vinyeee.mysns.model.User;
 import dev.vinyeee.mysns.model.entity.UserEntity;
 import dev.vinyeee.mysns.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserEntityRepository userEntityRepository;
+    private final BCryptPasswordEncoder encoder;
 
     // TODO : implement
     public User signup(String userName, String password){
@@ -32,7 +34,9 @@ public class UserService {
 //        userEntity.setUserName(userName);
 //        userEntity.setPassword(password);
         //userEntityRepository.save(userEntity);
-        UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName, password));
+
+
+        UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName, encoder.encode(password)));
 
 
         return User.fromEntity(userEntity);
