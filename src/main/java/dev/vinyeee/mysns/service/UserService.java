@@ -39,9 +39,8 @@ public class UserService {
 
 
         UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName, encoder.encode(password)));
-        throw new RuntimeException();
 
-        //return User.fromEntity(userEntity);
+        return User.fromEntity(userEntity);
 
     }
 

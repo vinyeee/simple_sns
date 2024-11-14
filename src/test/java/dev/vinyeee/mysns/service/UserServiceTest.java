@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
@@ -26,6 +27,9 @@ public class UserServiceTest {
     @MockBean
     private UserEntityRepository userEntityRepository;
 
+    @MockBean
+    private BCryptPasswordEncoder encoder;
+
     @Test
     public void 회원가입이_정상적으로_동작하는경우(){
 
@@ -34,6 +38,7 @@ public class UserServiceTest {
 
         // mocking: userEntityRepository.findByUserName() 메서드가 호출되었을 때 실제 데이터베이스를 조회하는 대신, 우리가 지정한 fixture 데이터를 반환
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty()); // userName에 해당하는 계정이 없으면 무조건 empty 여야함
+        when(encoder.encode(password)).thenReturn("encrypt_password");
         when(userEntityRepository.save(any())).thenReturn(Optional.of(UserEntityFixture.get(userName,password))); // save 하면 저장된 엔티티를 반환
 
 
@@ -52,7 +57,8 @@ public class UserServiceTest {
 
         // mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture)); // userName에 해당하는 계정이 없으면 무조건 empty 여야함
-        when(userEntityRepository.save(any())).thenReturn(Optional.of(mock(UserEntity.class))); // save 하면 저장된 엔티티를 반환
+        when(encoder.encode(password)).thenReturn("encrypt_password");
+        when(userEntityRepository.save(any())).thenReturn(UserEntityFixture.get(userName,password)); // save 하면 저장된 엔티티를 반환
 
         Assertions.assertThrows(SnsApplicationException.class,() -> userService.signup(userName,password)); // assert: 실제 값과 예상 값을 비교하여 테스트의 성공여부를 결정
 
