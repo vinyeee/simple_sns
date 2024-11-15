@@ -22,10 +22,10 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class UserServiceTest {
 
-    @Autowired
+    @Autowired //실제 구현체를 주입
     private UserService userService;
 
-    @MockBean
+    @MockBean // 실제 동작 하지 않고 원하는 동작만을 정의하여 테스트할 수 있도록 함
     private UserEntityRepository userEntityRepository;
 
     @MockBean
