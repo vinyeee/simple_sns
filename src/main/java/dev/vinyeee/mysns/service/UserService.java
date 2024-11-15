@@ -52,7 +52,6 @@ public class UserService {
 
     }
 
-    // TODO :  implement
     // JWT: 그 유저가 어떤 유저인지 확인하기 위한 암호화된 문자열을 부여
     public String login(String userName, String password){ // 로그인에 성공하면 jwt 토근 부여
 
