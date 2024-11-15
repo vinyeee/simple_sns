@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,8 +49,8 @@ public class UserControllerTest {
 
 
         mockMvc.perform(post("/api/v1/users/join")
+                        .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                // TODO : add request body
                 .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName,password)))
         ).andDo(print())
                 .andExpect(status().isOk());
@@ -63,7 +64,7 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
-        when(userservice.signup(userName,password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME,""));
+        when(userservice.signup(userName,password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME));
 
 
         mockMvc.perform(post("/api/v1/users/join")
@@ -84,7 +85,6 @@ public class UserControllerTest {
 
         mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        // TODO : add request body
                         .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName,password)))
                 ).andDo(print())
                 .andExpect(status().isOk());
@@ -96,11 +96,10 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
-        when(userservice.login(userName,password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME,""));
+        when(userservice.login(userName,password)).thenThrow(new SnsApplicationException(ErrorCode.USER_NOT_FOUND));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        // TODO : add request body
                         .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName,password)))
                 ).andDo(print())
                 .andExpect(status().isNotFound());
@@ -112,18 +111,16 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
-        when(userservice.login(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME,""));
+        when(userservice.login(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.INVALID_PASSWORD));
 
 
         mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        // TODO : add request body
                         .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName,password)))
                 ).andDo(print())
                 .andExpect(status().isUnauthorized());
 
     }
-
 
 
 }
