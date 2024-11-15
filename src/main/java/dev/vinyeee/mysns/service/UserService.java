@@ -5,6 +5,7 @@ import dev.vinyeee.mysns.exception.SnsApplicationException;
 import dev.vinyeee.mysns.model.User;
 import dev.vinyeee.mysns.model.entity.UserEntity;
 import dev.vinyeee.mysns.repository.UserEntityRepository;
+import dev.vinyeee.mysns.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,8 @@ public class UserService {
             throw new SnsApplicationException(ErrorCode.INVALID_PASSWORD);
         }
         // 토큰 생성
+        JwtTokenUtils.generateToken(userName,)
+
         return "";
     }
 
