@@ -7,6 +7,7 @@ import dev.vinyeee.mysns.model.entity.UserEntity;
 import dev.vinyeee.mysns.repository.UserEntityRepository;
 import dev.vinyeee.mysns.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,12 @@ public class UserService {
 
     private final UserEntityRepository userEntityRepository;
     private final BCryptPasswordEncoder encoder;
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
+    @Value("${jwt.token.expired-time-ms}")
+    private Long expiredTimeMs;
 
     @Transactional // 회원가입 중 exception 이 발생하게 되면 entity 를 save 하는 부분이 롤백
     public User signup(String userName, String password){
@@ -58,9 +65,9 @@ public class UserService {
             throw new SnsApplicationException(ErrorCode.INVALID_PASSWORD);
         }
         // 토큰 생성
-        JwtTokenUtils.generateToken(userName,)
+        String token = JwtTokenUtils.generateToken(userName,secretKey,expiredTimeMs);
 
-        return "";
+        return token;
     }
 
 }
