@@ -30,11 +30,12 @@ public class JwtTokenFilter extends OncePerRequestFilter { // 이 필터는 모�
         }
 
         try {
-            // 3. 토큰 유효성 검사
-            // TODO: check token is valid (토큰이 만료되었거나 유효하지 않은지 확인)
 
-            // 4. "Bearer " 이후의 실제 토큰 값을 추출
+            // 3. "Bearer " 이후의 실제 토큰 값을 추출
             final String token = header.split(" ")[1].trim(); // "Bearer " 이후의 문자열을 가져옴
+
+            // 4. 토큰 유효성 검사
+            // TODO: check token is valid (토큰이 만료되었거나 유효하지 않은지 확인)
 
             // 5. 추출한 토큰에서 사용자 이름을 가져옴
             // TODO: get username from token
@@ -50,13 +51,12 @@ public class JwtTokenFilter extends OncePerRequestFilter { // 이 필터는 모�
                     null, null, null
             );
 
-            // 8. SecurityContext에 인증된 사용자 정보를 설정
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         } catch (RuntimeException e) {
             // 9. 예외가 발생한 경우 로그를 남기고 필터 체인의 다음 필터로 진행
-            filterChain.doFilter(request, response);
             log.error("Error occurs while validating. {}", e.toString());
+            filterChain.doFilter(request, response);
             return;
         }
 

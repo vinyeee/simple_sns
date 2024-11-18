@@ -21,9 +21,9 @@ public class AuthenticationConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/**").authenticated() // 그 이외의 것들은 항상 인증필요
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT를 사용할 때는 서버에서 세션을 관리할 필요가 없음
                 .and()
-                .addFilterBefore(new JwtTokenFilter(), UsernamePasswordAuthenticationFilter.class) // 요청이 들어올 때마다 요청 앞에서 필터를 통해 그 안에 있는 토큰 값을 보고 어떤 유저인지 확인
+                .addFilterBefore(new JwtTokenFilter(), UsernamePasswordAuthenticationFilter.class) // 요청이 들어올 때마다 JWT 토큰을 확인하고, 유효성을 검사하는 필터
 
                 ;
                 // TODO
