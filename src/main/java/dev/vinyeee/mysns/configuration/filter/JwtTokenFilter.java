@@ -1,9 +1,16 @@
 package dev.vinyeee.mysns.configuration.filter;
 
+import dev.vinyeee.mysns.model.User;
+import dev.vinyeee.mysns.service.UserService;
+import dev.vinyeee.mysns.util.JwtTokenUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -11,9 +18,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter { // 이 필터는 모든 HTTP 요청마다 한 번씩 실행됨 (Spring Security의 필터 체인에 등록)
+
+    private final String key;
+    private final UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -36,21 +48,35 @@ public class JwtTokenFilter extends OncePerRequestFilter { // 이 필터는 모�
 
             // 4. 토큰 유효성 검사
             // TODO: check token is valid (토큰이 만료되었거나 유효하지 않은지 확인)
+            if(JwtTokenUtils.isExpired(token,key)){
+                log.error("key is expired");
+                filterChain.doFilter(request, response); // 왜 만료된 필터에도 doFilter 를 ?
+                // 만약 doFilter()를 호출하지 않고 단순히 return으로 종료한다면, 나머지 필터들이 실행되지 않아 보안 로직이 제대로 작동하지 않을 수 있음
+
+                return; // 더 이상 처리하지 않음
+            }
 
             // 5. 추출한 토큰에서 사용자 이름을 가져옴
             // TODO: get username from token
-            String userName = ""; // 토큰에서 사용자 이름 추출
+            String userName = JwtTokenUtils.getUserNameByPayload(token, key); // 토큰에서 사용자 이름 추출
+
 
             // 6. 사용자 이름이 유효한지 확인
+            // 유저가 실제로 존재하는지
             // TODO: check the userName is valid
+            User user = userService.loadUserByUserName(userName);
+
+
 
             // 7. 인증된 사용자 정보를 생성하여 SecurityContext에 저장
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     // 실제 사용자 정보 (userDetails)와 권한 리스트를 추가할 수 있음
                     // 현재는 인증 객체를 null로 설정 (사용자 정보와 권한이 없기 때문)
-                    null, null, null
+                    user, null, List.of(new SimpleGrantedAuthority(user.getRole().toString()))
             );
 
+
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         } catch (RuntimeException e) {
