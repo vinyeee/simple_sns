@@ -1,7 +1,11 @@
 package dev.vinyeee.mysns.configuration;
 
 import dev.vinyeee.mysns.configuration.filter.JwtTokenFilter;
+import dev.vinyeee.mysns.service.UserService;
 import dev.vinyeee.mysns.util.JwtTokenUtils;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -9,9 +13,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class AuthenticationConfig extends WebSecurityConfigurerAdapter {
+
+    private final UserService userService;
+    @Value("${jwt.secret-key}")
+    private String key;
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -23,7 +34,7 @@ public class AuthenticationConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT를 사용할 때는 서버에서 세션을 관리할 필요가 없음
                 .and()
-                .addFilterBefore(new JwtTokenFilter(), UsernamePasswordAuthenticationFilter.class) // 요청이 들어올 때마다 JWT 토큰을 확인하고, 유효성을 검사하는 필터
+                .addFilterBefore(new JwtTokenFilter(key, userService), UsernamePasswordAuthenticationFilter.class) // 요청이 들어올 때마다 JWT 토큰을 확인하고, 유효성을 검사하는 필터
 
                 ;
                 // TODO
