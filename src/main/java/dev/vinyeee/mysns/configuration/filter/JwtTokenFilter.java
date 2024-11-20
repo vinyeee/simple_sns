@@ -58,8 +58,7 @@ public class JwtTokenFilter extends OncePerRequestFilter { // 이 필터는 모�
 
             // 5. 추출한 토큰에서 사용자 이름을 가져옴
             // TODO: get username from token
-            String userName = JwtTokenUtils.getUserNameByPayload(token, key); // 토큰에서 사용자 이름 추출
-
+            String userName = JwtTokenUtils.getUserName(token, key); // 토큰에서 사용자 이름 추출
 
             // 6. 사용자 이름이 유효한지 확인
             // 유저가 실제로 존재하는지

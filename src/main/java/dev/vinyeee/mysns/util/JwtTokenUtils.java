@@ -12,7 +12,7 @@ import java.util.Date;
 public class JwtTokenUtils{
 
 
-    public static String getUserNameByPayload(String token, String key){
+    public static String getUserName(String token, String key){
          return extractClaims(token, key).get("userName", String.class);
     }
 
@@ -27,7 +27,7 @@ public class JwtTokenUtils{
     // 이 새로 만든 서명과 토큰에 포함된 서명이 일치하면 유효한 토큰으로 간주하고, 이후 Claims를 추출
     public static Claims extractClaims(String token , String key){
         return Jwts.parserBuilder().setSigningKey(getKey(key)) // Claim 을 가져올 parser 를 만들 준비하고 생성된 key 를 넣어줌
-                .build().parseClaimsJwt(token).getBody(); // parser 를 빌드하고 token 에서 payload 부분을 parse 함
+                .build().parseClaimsJws(token).getBody(); // parser 를 빌드하고 token 에서 payload 부분을 parse 함
     }
 
 
