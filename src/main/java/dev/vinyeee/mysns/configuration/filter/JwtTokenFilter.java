@@ -68,15 +68,15 @@ public class JwtTokenFilter extends OncePerRequestFilter { // 이 필터는 모�
 
 
             // 7. 인증된 사용자 정보를 생성하여 SecurityContext에 저장
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     // 실제 사용자 정보 (userDetails)와 권한 리스트를 추가할 수 있음
                     // 현재는 인증 객체를 null로 설정 (사용자 정보와 권한이 없기 때문)
-                    user, null, List.of(new SimpleGrantedAuthority(user.getRole().toString()))
+                    user, null, user.getAuthorities()
             );
 
 
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (RuntimeException e) {
             // 9. 예외가 발생한 경우 로그를 남기고 필터 체인의 다음 필터로 진행
