@@ -1,6 +1,7 @@
 package dev.vinyeee.mysns.configuration;
 
 import dev.vinyeee.mysns.configuration.filter.JwtTokenFilter;
+import dev.vinyeee.mysns.exception.CustomAuthenticationEntryPoint;
 import dev.vinyeee.mysns.service.UserService;
 import dev.vinyeee.mysns.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,6 @@ public class AuthenticationConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(new JwtTokenFilter(key, userService), UsernamePasswordAuthenticationFilter.class) // 요청이 들어올 때마다 JWT 토큰을 확인하고, 유효성을 검사하는 필터
                 .exceptionHandling() // security 인증 과정에서 exception 이 발생했을 경우에
-                .authenticationEntryPoint();
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
     }
 }

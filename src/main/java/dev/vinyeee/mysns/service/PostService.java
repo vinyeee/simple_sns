@@ -27,6 +27,6 @@ public class PostService {
 
         // post save
         PostEntity saved = postEntityRepository.save(PostEntity.of(title,body,userEntity));
-        // return
+        // return // 작성한 post 를 굳이 넘겨줄 필요는 없을 것 같아서 void 로 유지
     }
 }
