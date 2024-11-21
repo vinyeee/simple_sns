@@ -45,10 +45,11 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
+        // 회원가입 메소드가 호출되면 mock(가짜) 객체인 USER 클래스를 반환
         when(userservice.signup(userName,password)).thenReturn(mock(User.class));
 
 
-        mockMvc.perform(post("/api/v1/users/join")
+        mockMvc.perform(post("/api/v1/users/signup")
                         .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName,password)))
@@ -64,10 +65,11 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
+        // 회원가입 메소드가 호출되면 DUPLICATED_USER_NAME 에러를 반환
         when(userservice.signup(userName,password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME));
 
 
-        mockMvc.perform(post("/api/v1/users/join")
+        mockMvc.perform(post("/api/v1/users/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName,password)))
         ).andDo(print())
@@ -80,6 +82,7 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
+        // 로그인 메소드가 호출되면 문자열을 반환
         when(userservice.login(userName,password)).thenReturn("test_token");
 
 
@@ -96,6 +99,7 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
+        // 로그인 메소드가 호출되면 USER_NOT_FOUND 에러를 반환
         when(userservice.login(userName,password)).thenThrow(new SnsApplicationException(ErrorCode.USER_NOT_FOUND));
 
         mockMvc.perform(post("/api/v1/users/login")
@@ -111,6 +115,7 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
+        // 로그인 메소드가 호출되면 INVALID PASSWORD 에러를 던짐
         when(userservice.login(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.INVALID_PASSWORD));
 
 
@@ -119,7 +124,6 @@ public class UserControllerTest {
                         .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName,password)))
                 ).andDo(print())
                 .andExpect(status().isUnauthorized());
-
     }
 
 

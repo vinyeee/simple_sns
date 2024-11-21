@@ -1,7 +1,10 @@
 package dev.vinyeee.mysns.service;
 
+import dev.vinyeee.mysns.controller.request.PostModifyRequest;
 import dev.vinyeee.mysns.exception.ErrorCode;
 import dev.vinyeee.mysns.exception.SnsApplicationException;
+import dev.vinyeee.mysns.fixture.PostEntityFixture;
+import dev.vinyeee.mysns.fixture.UserEntityFixture;
 import dev.vinyeee.mysns.model.entity.PostEntity;
 import dev.vinyeee.mysns.model.entity.UserEntity;
 import dev.vinyeee.mysns.repository.PostEntityRepository;
@@ -11,12 +14,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 public class PostServiceTest {
@@ -62,4 +70,71 @@ public class PostServiceTest {
         SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class,()-> postService.create(title,body,userName));
         Assertions.assertEquals(ErrorCode.USER_NOT_FOUND,e.getErrorCode());
     }
+
+    @Test
+    public void 포스트수정이_성공한_경우() throws Exception {
+
+        String title = "title";
+        String body = "body";
+        String userName = "userName";
+        Integer postId = 1;
+
+        // mocking
+        PostEntity postEntity = PostEntityFixture.get(userName,postId);// userName 과 postId 로 특정한 post 객체를 만들어줌
+        UserEntity userEntity = postEntity.getUser();
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity)); // userName 으로 찾은 유저가 일단 존재해야함
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity)); // 수정하려는 포스트가 존재
+
+        // when -> then
+        Assertions.assertDoesNotThrow(() -> postService.modify(title,body,userName,postId));
+
+
+    }
+
+    @Test
+    public void 포스트수정시_포스트가_존재하지_않는경우() throws Exception {
+
+        String title = "title";
+        String body = "body";
+        String userName = "userName";
+        Integer postId = 1;
+
+        // mocking
+        PostEntity postEntity = PostEntityFixture.get(userName,postId);// userName 과 postId 로 특정한 post 객체를 만들어줌
+        UserEntity userEntity = postEntity.getUser();
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity)); // userName 으로 찾은 유저가 일단 존재해야함
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.empty()); // 수정하려는 포스트가 존재
+
+        // when -> then
+        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class,()-> postService.modify(title,body,userName,postId));
+        Assertions.assertEquals(ErrorCode.POST_NOT_FOUND,e.getErrorCode());
+
+    }
+
+    @Test
+    public void 포스트수정시_권한이없는경우() throws Exception {
+
+        String title = "title";
+        String body = "body";
+        String userName = "userName";
+        Integer postId = 1;
+
+        // mocking
+        PostEntity postEntity = PostEntityFixture.get(userName,postId);// userName 과 postId 로 특정한 post 객체를 만들어줌
+        UserEntity userEntity = postEntity.getUser(); // 현재 로그인해있는 유저
+
+        UserEntity writer = UserEntityFixture.get("writer","password"); // 실제 그 글을쓴 작성자
+
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(writer)); // userName 으로 찾은 유저가 일단 존재해야함
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity)); // 수정하려는 포스트가 존재
+
+
+        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, ()-> postService.modify(title,body,userName,postId));
+        Assertions.assertEquals(ErrorCode.INVALID_PERMISSION,e.getErrorCode());
+    }
+
+
 }

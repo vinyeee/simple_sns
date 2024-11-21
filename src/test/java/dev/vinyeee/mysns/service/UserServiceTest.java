@@ -116,6 +116,5 @@ public class UserServiceTest {
         SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () -> userService.login(userName, wrongPassword)); // assert: 실제 값과 예상 값을 비교하여 테스트의 성공여부를 결정
         Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, e.getErrorCode());
 
-
     }
 }
