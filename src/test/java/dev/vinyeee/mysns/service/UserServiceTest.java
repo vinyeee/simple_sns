@@ -39,7 +39,7 @@ public class UserServiceTest {
         // mocking: userEntityRepository.findByUserName() 메서드가 호출되었을 때 실제 데이터베이스를 조회하는 대신, 우리가 지정한 fixture 데이터를 반환
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty()); // userName에 해당하는 계정이 없으면 무조건 empty 여야함
         when(encoder.encode(password)).thenReturn("encrypt_password");
-        when(userEntityRepository.save(any())).thenReturn(UserEntityFixture.get(userName,password)); // save 하면 저장된 엔티티를 반환
+        when(userEntityRepository.save(any())).thenReturn(UserEntityFixture.get(userName,password,1)); // save 하면 저장된 엔티티를 반환
 
 
         Assertions.assertDoesNotThrow(() -> userService.signup(userName,password)); // assert: 실제 값과 예상 값을 비교하여 테스트의 성공여부를 결정
@@ -54,12 +54,12 @@ public class UserServiceTest {
         String userName = "userName";
         String password = "password";
 
-        UserEntity fixture = UserEntityFixture.get(userName,password);
+        UserEntity fixture = UserEntityFixture.get(userName,password,1);
 
         // when
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
         when(encoder.encode(password)).thenReturn("encrypt_password");
-        when(userEntityRepository.save(any())).thenReturn(UserEntityFixture.get(userName,password)); // save 하면 저장된 엔티티를 반환
+        when(userEntityRepository.save(any())).thenReturn(UserEntityFixture.get(userName,password,1)); // save 하면 저장된 엔티티를 반환
 
         // then
         SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class,() -> userService.signup(userName,password)); // assert: 실제 값과 예상 값을 비교하여 테스트의 성공여부를 결정
@@ -74,7 +74,7 @@ public class UserServiceTest {
         String password = "password";
 
         // 가상의 entity userEntity Fixture
-        UserEntity fixture = UserEntityFixture.get(userName,password);
+        UserEntity fixture = UserEntityFixture.get(userName,password,1);
 
         // mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture)); //<optional>UserEntity 객체를 전달해야하는데 null 이 아니여서 of로 감싸줌
@@ -107,7 +107,7 @@ public class UserServiceTest {
         String password = "password";
         String wrongPassword = "wrongPassword";
 
-        UserEntity fixture = UserEntityFixture.get(userName, password);
+        UserEntity fixture = UserEntityFixture.get(userName, password,1);
 
         // mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
