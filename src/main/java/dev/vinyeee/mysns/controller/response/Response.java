@@ -17,6 +17,11 @@ public class Response<T> {
 
     }
 
+    // 성공 응답 , 반환 값이 없을 때
+    public static Response<Void> success(){
+        return new Response<Void>("SUCCESS",null);
+    }
+
     // 성공 응답 <T> 타입 매개변수, <T> 타입의 반환 값
     public static <T> Response<T> success(T result){
         return new Response<>("SUCCESS",result);

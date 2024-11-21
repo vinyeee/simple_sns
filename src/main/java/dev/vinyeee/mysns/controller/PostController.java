@@ -20,6 +20,6 @@ public class PostController {
     @PostMapping
     public Response<Void> create(@RequestBody PostCreateRequest postCreateRequest, Authentication authentication){ // 유저를 받아오는건 spring security jwt 으로
         postService.create(postCreateRequest.getTitle(),postCreateRequest.getBody(),authentication.getName());
-        return Response.success(null);
+        return Response.success();
     }
 }
