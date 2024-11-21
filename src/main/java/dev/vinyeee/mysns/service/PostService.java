@@ -2,6 +2,7 @@ package dev.vinyeee.mysns.service;
 
 import dev.vinyeee.mysns.exception.ErrorCode;
 import dev.vinyeee.mysns.exception.SnsApplicationException;
+import dev.vinyeee.mysns.model.Post;
 import dev.vinyeee.mysns.model.entity.PostEntity;
 import dev.vinyeee.mysns.model.entity.UserEntity;
 import dev.vinyeee.mysns.repository.PostEntityRepository;
@@ -32,15 +33,24 @@ public class PostService {
 
 
     @Transactional
-    public void modify(String title, String body, String userName, Integer postId){
+    public Post modify(String title, String body, String userName, Integer postId){
         // 로그인 했는지 체크
         UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() ->
                 new SnsApplicationException(ErrorCode.USER_NOT_FOUND,String.format("%s not found",userName)));
 
         // 포스트가 존재하는지 체크
-
+        PostEntity postEntity = postEntityRepository.findById(postId).orElseThrow(() ->
+                new SnsApplicationException(ErrorCode.POST_NOT_FOUND,String.format("%s not found",postId))
+        );
 
         // 자신이 작성한 포스트가 맞으면 수정
+        if (postEntity.getUser() != userEntity){ // 포스트 작성한 유저랑 로그인한 유저랑 비교
+            throw new SnsApplicationException(ErrorCode.INVALID_PERMISSION,String.format("%s has no permission with %s",userName,postId));
+        }
 
+        postEntity.setTitle(title);
+        postEntity.setBody(body);
+
+       return Post.fromEntity(postEntityRepository.save(postEntity));
     }
 }
