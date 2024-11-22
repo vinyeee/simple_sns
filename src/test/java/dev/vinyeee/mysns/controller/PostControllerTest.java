@@ -186,5 +186,58 @@ public class PostControllerTest {
 
     }
 
+    @Test
+    @WithMockUser
+    public void 피드목록() throws Exception {
+
+        // mocking
+
+        mockMvc.perform(get("/api/v1/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void 피드목록_요청시_로그인하지_않은경우() throws Exception {
+
+        // mocking
+
+        mockMvc.perform(delete("/api/v1/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @WithMockUser
+    public void 내피드목록() throws Exception {
+
+        // mocking
+
+        mockMvc.perform(get("/api/v1/posts/my")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void 내피드목록_요청시_로그인하지_않은경우() throws Exception {
+
+        // mocking
+
+        mockMvc.perform(delete("/api/v1/posts/my")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+
 
 }
