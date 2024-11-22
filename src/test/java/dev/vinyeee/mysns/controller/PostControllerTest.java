@@ -152,7 +152,6 @@ public class PostControllerTest {
     @WithAnonymousUser
     public void 포스트삭제시_로그인하지_않은경우() throws Exception {
 
-//        doThrow(new SnsApplicationException(ErrorCode.USER_NOT_FOUND)).when(postService).delete(any(),any());
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .contentType(MediaType.APPLICATION_JSON)

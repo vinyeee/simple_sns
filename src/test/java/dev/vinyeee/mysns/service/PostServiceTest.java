@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
+// 서비스단에서는 비즈니스 로직만 테스트, 로그인관련은 컨트롤러
 @SpringBootTest
 public class PostServiceTest {
 
@@ -181,8 +181,8 @@ public class PostServiceTest {
         UserEntity writer = UserEntityFixture.get("writer","password",2); // 실제 그 글을쓴 작성자
 
         // 로그인해서 수정 요청한 유저랑 postEntity 에서 꺼낸 유저(실제 작성자)가 다름
-        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(writer)); // userName 으로 찾은 유저가 일단 존재해야함
-        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity)); // 수정하려는 포스트가 존재
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(writer));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
 
 
         SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, ()-> postService.delete(userName,postId));

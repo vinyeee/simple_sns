@@ -65,7 +65,7 @@ public class PostService {
         );
 
         if(postEntity.getUser() != userEntity){
-            throw new SnsApplicationException(ErrorCode.INVALID_PERMISSION,String.format("%s has no permission with %s",userName));
+            throw new SnsApplicationException(ErrorCode.INVALID_PERMISSION,String.format("%s has no permission with %s",userName,postId));
         }
 
         postEntityRepository.delete(postEntity);

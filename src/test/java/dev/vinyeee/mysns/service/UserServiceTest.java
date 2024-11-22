@@ -18,6 +18,8 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+
+// 서비스단에서는 비즈니스 로직만 테스트, 로그인관련은 컨트롤러
 @SpringBootTest
 public class UserServiceTest {
 
