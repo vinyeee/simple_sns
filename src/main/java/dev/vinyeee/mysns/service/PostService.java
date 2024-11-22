@@ -8,6 +8,8 @@ import dev.vinyeee.mysns.model.entity.UserEntity;
 import dev.vinyeee.mysns.repository.PostEntityRepository;
 import dev.vinyeee.mysns.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -72,4 +74,15 @@ public class PostService {
 
     }
 
+    public Page<Post> list(Pageable pageable){
+        return postEntityRepository.findAll(pageable).map(Post::fromEntity); // map 함수를 이용하여 Page<PostEntity> 에 있는 엔티티들을 Post 로 변경해준다
+    }
+
+    public Page<Post> my(String userName, Pageable pageable){
+
+        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() ->
+                new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not found", userName)));
+
+        return postEntityRepository.findAllByUser(userEntity,pageable).map(Post::fromEntity); // map 함수를 이용하여 Page<PostEntity> 에 있는 엔티티들을 Post 로 변경해준다
+    }
 }
