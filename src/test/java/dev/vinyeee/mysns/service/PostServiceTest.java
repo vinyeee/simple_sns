@@ -22,6 +22,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,9 +86,11 @@ public class PostServiceTest {
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity)); // userName 으로 찾은 유저가 일단 존재해야함
         when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity)); // 수정하려는 포스트가 존재
+        when(postEntityRepository.saveAndFlush(any())).thenReturn(postEntity);
 
         // when -> then
         Assertions.assertDoesNotThrow(() -> postService.modify(title,body,userName,postId));
+
 
 
     }
@@ -105,7 +108,7 @@ public class PostServiceTest {
         UserEntity userEntity = postEntity.getUser();
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity)); // userName 으로 찾은 유저가 일단 존재해야함
-        when(postEntityRepository.findById(postId)).thenReturn(Optional.empty()); // 수정하려는 포스트가 존재
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.empty()); // 수정하려는 포스트가 존재하지 않음
 
         // when -> then
         SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class,()-> postService.modify(title,body,userName,postId));
@@ -123,11 +126,10 @@ public class PostServiceTest {
 
         // mocking
         PostEntity postEntity = PostEntityFixture.get(userName,postId,1);// userName 과 postId 로 특정한 post 객체를 만들어줌
-        UserEntity userEntity = postEntity.getUser(); // 현재 로그인해있는 유저
 
         UserEntity writer = UserEntityFixture.get("writer","password",2); // 실제 그 글을쓴 작성자
 
-
+        // 로그인해서 수정 요청한 유저랑 postEntity 에서 꺼낸 유저(실제 작성자)가 다름
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(writer)); // userName 으로 찾은 유저가 일단 존재해야함
         when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity)); // 수정하려는 포스트가 존재
 

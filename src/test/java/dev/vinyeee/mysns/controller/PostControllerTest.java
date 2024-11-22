@@ -6,6 +6,8 @@ import dev.vinyeee.mysns.controller.request.PostCreateRequest;
 import dev.vinyeee.mysns.controller.request.PostModifyRequest;
 import dev.vinyeee.mysns.exception.ErrorCode;
 import dev.vinyeee.mysns.exception.SnsApplicationException;
+import dev.vinyeee.mysns.fixture.PostEntityFixture;
+import dev.vinyeee.mysns.model.Post;
 import dev.vinyeee.mysns.service.PostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -73,6 +76,9 @@ public class PostControllerTest {
 
         String title = "title";
         String body = "body";
+
+        when(postService.modify(eq(title),eq(body),any(),any())).
+                thenReturn(Post.fromEntity(PostEntityFixture.get("userName",1,1)));
 
         mockMvc.perform(put("/api/v1/posts/1")
                         .contentType(MediaType.APPLICATION_JSON)
