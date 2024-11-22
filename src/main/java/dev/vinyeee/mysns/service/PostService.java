@@ -51,6 +51,7 @@ public class PostService {
         postEntity.setTitle(title);
         postEntity.setBody(body);
 
-       return Post.fromEntity(postEntityRepository.save(postEntity));
+//       return Post.fromEntity(postEntityRepository.save(postEntity));
+        return Post.fromEntity(postEntityRepository.saveAndFlush(postEntity));
     }
 }
