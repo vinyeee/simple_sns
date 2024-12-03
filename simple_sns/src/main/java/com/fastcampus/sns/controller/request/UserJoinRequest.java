@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 // 회원가입 시 request body 로 받아올 데이터
 public class UserJoinRequest {
 
-    private String userName;
+    private String name;
     private String password;
 
 

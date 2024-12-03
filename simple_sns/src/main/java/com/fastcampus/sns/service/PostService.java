@@ -85,4 +85,10 @@ public class PostService {
 
         return postEntityRepository.findAllByUser(userEntity,pageable).map(Post::fromEntity); // map 함수를 이용하여 Page<PostEntity> 에 있는 엔티티들을 Post 로 변경해준다
     }
+
+    @Transactional
+    public void like(Integer postId, String userName){
+
+
+    }
 }

@@ -24,13 +24,13 @@ public class UserController {
 
     @PostMapping("/join")
     public Response<UserJoinResponse> signup(@RequestBody UserJoinRequest userJoinRequest){
-        User user = userService.signup(userJoinRequest.getUserName(),userJoinRequest.getPassword());
+        User user = userService.signup(userJoinRequest.getName(),userJoinRequest.getPassword());
         return Response.success(UserJoinResponse.fromUser(user));
     }
 
     @PostMapping("/login")
     public Response<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest){
-        String token = userService.login(userLoginRequest.getUserName(),userLoginRequest.getPassword());
+        String token = userService.login(userLoginRequest.getName(),userLoginRequest.getPassword());
         return Response.success(new UserLoginResponse(token));
     }
 }

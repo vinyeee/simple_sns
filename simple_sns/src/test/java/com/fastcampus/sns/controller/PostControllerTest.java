@@ -244,6 +244,42 @@ public class PostControllerTest {
 
     }
 
+    @Test
+    @WithMockUser
+    public void 좋아요기능() throws Exception {
+        mockMvc.perform(get("/api/v1/posts/1/likes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void 좋아요버튼_클릭시_로그인하지_않은경우() throws Exception {
+
+        doThrow(new SnsApplicationException(ErrorCode.INVALID_PERMISSION)).when(postService).delete(any(),any());
+
+        mockMvc.perform(delete("/api/v1/posts/1/likes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void 좋아요버튼_클릭시_게시물이_존재하지_않는경우() throws Exception {
+
+
+        doThrow(new SnsApplicationException(ErrorCode.POST_NOT_FOUND)).when(postService).like(any(), any());
+
+        mockMvc.perform(delete("/api/v1/posts/1/likes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isNotFound());
+
+    }
 
 
 }
