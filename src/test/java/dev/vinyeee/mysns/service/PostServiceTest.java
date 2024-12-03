@@ -203,8 +203,12 @@ public class PostServiceTest {
     @Test
     public void 내피드목록요청이_성공한_경우() throws Exception {
 
+
         Pageable pageable = mock(Pageable.class);
-        when(postEntityRepository.findAllByUser(any(),pageable)).thenReturn(Page.empty());
+        UserEntity userEntity = mock(UserEntity.class);
+
+        when(userEntityRepository.findByUserName(any())).thenReturn(Optional.of(userEntity));
+        when(postEntityRepository.findAllByUser(userEntity,pageable)).thenReturn(Page.empty());
         Assertions.assertDoesNotThrow(() -> postService.my("",pageable));
 
     }

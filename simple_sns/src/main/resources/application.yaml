@@ -1,0 +1,30 @@
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mysns  # PostgreSQL ?????? URL
+    username: postgres  # PostgreSQL ????
+    password: test1234  # PostgreSQL ????
+    driver-class-name: org.postgresql.Driver  # PostgreSQL ???? ???
+    hikari:
+      maximum-pool-size: 4  # HikariCP? ?? ??? ? ?? (??)
+  jpa:
+    hibernate:
+      ddl-auto: update  # Hibernate DDL ?? ?? ??
+    properties:
+      hibernate:
+        format_sql: true  # SQL ?? ???
+    show-sql: true  # ???? SQL? ??? ??
+    database-platform: org.hibernate.dialect.PostgreSQLDialect  # PostgreSQL Dialect ??
+
+jwt:
+  secret-key: fast_campus.sns-application-2022.secret_key
+  ## 30 days
+  token.expired-time-ms: 2592000000
+
+logging:
+  level:
+    org:
+      springframework:
+        security=DEBUG:
+server:
+  port: 8088
