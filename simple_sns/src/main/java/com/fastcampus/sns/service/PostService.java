@@ -20,6 +20,7 @@ public class PostService {
 
     private final UserEntityRepository userEntityRepository;
     private final PostEntityRepository postEntityRepository;
+    //private final LikeEntityRepository likeEntityRepository;
 
     @Transactional
     public void create(String title, String body, String userName){
@@ -88,6 +89,22 @@ public class PostService {
 
     @Transactional
     public void like(Integer postId, String userName){
+
+        // 포스트가 존재하는지 체크
+        PostEntity postEntity = postEntityRepository.findById(postId).orElseThrow(() ->
+                new SnsApplicationException(ErrorCode.POST_NOT_FOUND,String.format("%s not found",postId))
+        );
+
+
+        // 유저 체크
+        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() ->
+                new SnsApplicationException(ErrorCode.USER_NOT_FOUND,String.format("%s not found",userName)));
+
+        // 좋아요 눌렀는지 체크 - > Throw
+
+        // 누른 적 없으면 좋아요 반영
+
+        // 좋아요 저장
 
 
     }
