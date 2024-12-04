@@ -122,8 +122,8 @@ public class PostService {
         );
 
         // 좋아요 갯수 세기
-        List<LikeEntity> allByPost = likeEntityRepository.findAllByPost(postEntity);
-        return allByPost.size();
-
+//        List<LikeEntity> allByPost = likeEntityRepository.findAllByPost(postEntity);
+//        return allByPost.size();
+        return likeEntityRepository.countByPost(postEntity);
     }
 }
