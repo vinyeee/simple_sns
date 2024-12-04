@@ -3,8 +3,10 @@ package com.fastcampus.sns.service;
 import com.fastcampus.sns.exception.ErrorCode;
 import com.fastcampus.sns.exception.SnsApplicationException;
 import com.fastcampus.sns.model.Post;
+import com.fastcampus.sns.model.entity.LikeEntity;
 import com.fastcampus.sns.model.entity.PostEntity;
 import com.fastcampus.sns.model.entity.UserEntity;
+import com.fastcampus.sns.repository.LikeEntityRepository;
 import com.fastcampus.sns.repository.PostEntityRepository;
 import com.fastcampus.sns.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +23,7 @@ public class PostService {
 
     private final UserEntityRepository userEntityRepository;
     private final PostEntityRepository postEntityRepository;
-    //private final LikeEntityRepository likeEntityRepository;
+    private final LikeEntityRepository likeEntityRepository;
 
     @Transactional
     public void create(String title, String body, String userName){
@@ -101,11 +104,26 @@ public class PostService {
                 new SnsApplicationException(ErrorCode.USER_NOT_FOUND,String.format("%s not found",userName)));
 
         // 좋아요 눌렀는지 체크 - > Throw
+        likeEntityRepository.findByUserAndPost(userEntity, postEntity).ifPresent(it -> {
+            throw new SnsApplicationException(ErrorCode.ALREADY_LIKED,String.format("userName %s already like post %d",userName,postId));
+        });
 
-        // 누른 적 없으면 좋아요 반영
+        // 누른 적 없으면 save
+        likeEntityRepository.save(LikeEntity.of(userEntity,postEntity));
 
-        // 좋아요 저장
+    }
 
+    @Transactional
+    public int likeCount(Integer postId){
+
+        // 포스트가 존재하는지 체크
+        PostEntity postEntity = postEntityRepository.findById(postId).orElseThrow(() ->
+                new SnsApplicationException(ErrorCode.POST_NOT_FOUND,String.format("%s not found",postId))
+        );
+
+        // 좋아요 갯수 세기
+        List<LikeEntity> allByPost = likeEntityRepository.findAllByPost(postEntity);
+        return allByPost.size();
 
     }
 }
