@@ -3,10 +3,11 @@ package com.fastcampus.sns.service;
 import com.fastcampus.sns.exception.ErrorCode;
 import com.fastcampus.sns.exception.SnsApplicationException;
 import com.fastcampus.sns.model.Post;
-import com.fastcampus.sns.model.User;
+import com.fastcampus.sns.model.entity.CommentEntity;
 import com.fastcampus.sns.model.entity.LikeEntity;
 import com.fastcampus.sns.model.entity.PostEntity;
 import com.fastcampus.sns.model.entity.UserEntity;
+import com.fastcampus.sns.repository.CommentEntityRepository;
 import com.fastcampus.sns.repository.LikeEntityRepository;
 import com.fastcampus.sns.repository.PostEntityRepository;
 import com.fastcampus.sns.repository.UserEntityRepository;
@@ -16,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +25,7 @@ public class PostService {
     private final UserEntityRepository userEntityRepository;
     private final PostEntityRepository postEntityRepository;
     private final LikeEntityRepository likeEntityRepository;
+    private final CommentEntityRepository commentEntityRepository;
 
     @Transactional
     public void create(String title, String body, String userName){
@@ -113,8 +114,10 @@ public class PostService {
 
     @Transactional
     public void comment(Integer postId, String userName, String comment){
-        getPostOrException(postId);
-        getUserOrException(userName);
+        PostEntity postEntity = getPostOrException(postId);
+        UserEntity userEntity = getUserOrException(userName);
+
+
 
     }
 
