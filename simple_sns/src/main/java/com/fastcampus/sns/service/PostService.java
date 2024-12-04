@@ -3,6 +3,7 @@ package com.fastcampus.sns.service;
 import com.fastcampus.sns.exception.ErrorCode;
 import com.fastcampus.sns.exception.SnsApplicationException;
 import com.fastcampus.sns.model.Post;
+import com.fastcampus.sns.model.User;
 import com.fastcampus.sns.model.entity.LikeEntity;
 import com.fastcampus.sns.model.entity.PostEntity;
 import com.fastcampus.sns.model.entity.UserEntity;
@@ -29,8 +30,7 @@ public class PostService {
     public void create(String title, String body, String userName){
 
         // user find
-        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() ->
-                new SnsApplicationException(ErrorCode.USER_NOT_FOUND,String.format("%s not found",userName)));
+        UserEntity userEntity = getUserOrException(userName);
 
         // post save
         PostEntity saved = postEntityRepository.save(PostEntity.of(title,body,userEntity));
@@ -41,14 +41,10 @@ public class PostService {
     @Transactional
     public Post modify(String title, String body, String userName, Integer postId){
         // 로그인 했는지 체크
-        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() ->
-                new SnsApplicationException(ErrorCode.USER_NOT_FOUND,String.format("%s not found",userName)));
+        UserEntity userEntity = getUserOrException(userName);
 
         // 포스트가 존재하는지 체크
-        PostEntity postEntity = postEntityRepository.findById(postId).orElseThrow(() ->
-                new SnsApplicationException(ErrorCode.POST_NOT_FOUND,String.format("%s not found",postId))
-        );
-
+        PostEntity postEntity = getPostOrException(postId);
         // 자신이 작성한 포스트가 맞으면 수정
         if (postEntity.getUser() != userEntity){ // 포스트 작성한 유저랑 로그인한 유저랑 비교
             throw new SnsApplicationException(ErrorCode.INVALID_PERMISSION,String.format("%s has no permission with %s",userName,postId));
@@ -62,13 +58,8 @@ public class PostService {
     }
 
     public void delete(String userName, Integer postId){
-        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() ->
-                new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not found", userName)));
-
-
-        PostEntity postEntity = postEntityRepository.findById(postId).orElseThrow(() ->
-                new SnsApplicationException(ErrorCode.POST_NOT_FOUND,String.format("%s not found",postId))
-        );
+        UserEntity userEntity = getUserOrException(userName);
+        PostEntity postEntity = getPostOrException(postId);
 
         if(postEntity.getUser() != userEntity){
             throw new SnsApplicationException(ErrorCode.INVALID_PERMISSION,String.format("%s has no permission with %s",userName,postId));
@@ -94,14 +85,9 @@ public class PostService {
     public void like(Integer postId, String userName){
 
         // 포스트가 존재하는지 체크
-        PostEntity postEntity = postEntityRepository.findById(postId).orElseThrow(() ->
-                new SnsApplicationException(ErrorCode.POST_NOT_FOUND,String.format("%s not found",postId))
-        );
-
-
+        PostEntity postEntity = getPostOrException(postId);
         // 유저 체크
-        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() ->
-                new SnsApplicationException(ErrorCode.USER_NOT_FOUND,String.format("%s not found",userName)));
+        UserEntity userEntity = getUserOrException(userName);
 
         // 좋아요 눌렀는지 체크 - > Throw
         likeEntityRepository.findByUserAndPost(userEntity, postEntity).ifPresent(it -> {
@@ -117,9 +103,7 @@ public class PostService {
     public int likeCount(Integer postId){
 
         // 포스트가 존재하는지 체크
-        PostEntity postEntity = postEntityRepository.findById(postId).orElseThrow(() ->
-                new SnsApplicationException(ErrorCode.POST_NOT_FOUND,String.format("%s not found",postId))
-        );
+        PostEntity postEntity = getPostOrException(postId);
 
         // 좋아요 갯수 세기
 //        List<LikeEntity> allByPost = likeEntityRepository.findAllByPost(postEntity);
@@ -128,7 +112,23 @@ public class PostService {
     }
 
     @Transactional
-    public void comment(Integer postId, String userName){
+    public void comment(Integer postId, String userName, String comment){
+        getPostOrException(postId);
+        getUserOrException(userName);
 
+    }
+
+
+    private PostEntity getPostOrException(Integer postId){
+        // 포스트가 존재하는지 체크
+        return postEntityRepository.findById(postId).orElseThrow(() ->
+                new SnsApplicationException(ErrorCode.POST_NOT_FOUND,String.format("%s not found",postId))
+        );
+    }
+
+    private UserEntity getUserOrException(String userName){
+        // 유저가 존재하는지 체크
+        return userEntityRepository.findByUserName(userName).orElseThrow(() ->
+                new SnsApplicationException(ErrorCode.USER_NOT_FOUND,String.format("%s not found",userName)));
     }
 }
