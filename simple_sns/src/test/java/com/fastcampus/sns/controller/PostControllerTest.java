@@ -1,6 +1,7 @@
 package com.fastcampus.sns.controller;
 
 
+import com.fastcampus.sns.controller.request.PostCommentRequest;
 import com.fastcampus.sns.controller.request.PostCreateRequest;
 import com.fastcampus.sns.controller.request.PostModifyRequest;
 import com.fastcampus.sns.exception.ErrorCode;
@@ -258,7 +259,7 @@ public class PostControllerTest {
     @WithAnonymousUser
     public void 좋아요버튼_클릭시_로그인하지_않은경우() throws Exception {
 
-        doThrow(new SnsApplicationException(ErrorCode.INVALID_PERMISSION)).when(postService).delete(any(),any());
+        doThrow(new SnsApplicationException(ErrorCode.INVALID_PERMISSION)).when(postService).like(any(),any());
 
         mockMvc.perform(delete("/api/v1/posts/1/likes")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -276,6 +277,46 @@ public class PostControllerTest {
 
         mockMvc.perform(delete("/api/v1/posts/1/likes")
                         .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    @WithMockUser
+    public void 댓글작성() throws Exception {
+        mockMvc.perform(get("/api/v1/posts/1/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new PostCommentRequest("comment"))) // 자바 객체를 json 으로 변환
+                ).andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void 댓글작성시_로그인하지_않은경우() throws Exception {
+
+        doThrow(new SnsApplicationException(ErrorCode.INVALID_PERMISSION)).when(postService).comment(any(),any());
+
+        mockMvc.perform(delete("/api/v1/posts/1/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new PostCommentRequest("comment")))
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void 댓글작성시_게시물이_존재하지_않는경우() throws Exception {
+
+
+        doThrow(new SnsApplicationException(ErrorCode.POST_NOT_FOUND)).when(postService).comment(any(), any());
+
+        mockMvc.perform(delete("/api/v1/posts/1/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new PostCommentRequest("comment")))
                 ).andDo(print())
                 .andExpect(status().isNotFound());
 
