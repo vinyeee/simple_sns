@@ -2,6 +2,7 @@ package com.fastcampus.sns.service;
 
 import com.fastcampus.sns.exception.ErrorCode;
 import com.fastcampus.sns.exception.SnsApplicationException;
+import com.fastcampus.sns.model.Comment;
 import com.fastcampus.sns.model.Post;
 import com.fastcampus.sns.model.entity.CommentEntity;
 import com.fastcampus.sns.model.entity.LikeEntity;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -117,8 +119,7 @@ public class PostService {
         PostEntity postEntity = getPostOrException(postId);
         UserEntity userEntity = getUserOrException(userName);
 
-
-
+        commentEntityRepository.save(CommentEntity.of(userEntity,postEntity,comment));
     }
 
 
@@ -133,5 +134,10 @@ public class PostService {
         // 유저가 존재하는지 체크
         return userEntityRepository.findByUserName(userName).orElseThrow(() ->
                 new SnsApplicationException(ErrorCode.USER_NOT_FOUND,String.format("%s not found",userName)));
+    }
+
+    public Page<Comment> getComments(Integer postId, Pageable pageable) {
+        PostEntity postEntity = getPostOrException(postId);
+        return commentEntityRepository.findAllByPost(postEntity,pageable).map(Comment::fromEntity); // 클래스 :: 해당 클래스의 함수
     }
 }
