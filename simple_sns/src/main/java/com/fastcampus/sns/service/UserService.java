@@ -9,6 +9,8 @@ import com.fastcampus.sns.repository.UserEntityRepository;
 import com.fastcampus.sns.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -75,5 +77,9 @@ public class UserService {
                 () -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
     }
 
+    // 알람을 return
+    public Page<Void> alarmList(String userName , Pageable pageable){
+        return Page.empty();
+    }
 
 }
